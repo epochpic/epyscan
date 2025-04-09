@@ -1,10 +1,10 @@
 # epyscan
 
 ![PyPI](https://img.shields.io/pypi/v/epyscan?color=blue)
-![Build/Publish](https://github.com/PlasmaFAIR/epyscan/actions/workflows/build_publish.yml/badge.svg)
-![Tests](https://github.com/PlasmaFAIR/epyscan/actions/workflows/tests.yml/badge.svg)
+![Build/Publish](https://github.com/epochpic/epyscan/actions/workflows/build_publish.yml/badge.svg)
+![Tests](https://github.com/epochpic/epyscan/actions/workflows/tests.yml/badge.svg)
 
-Epyscan generates [EPOCH](https://epochpic.github.io/) campaigns over a parameter space using different sampling methods. Part of [BEAM](#broad-epoch-analysis-modules-beam) (Broad EPOCH Analysis Modules).
+Epyscan (short for *EPOCH Python scan*) generates [EPOCH](https://epochpic.github.io/) campaigns over a parameter space using different sampling methods. Part of [BEAM](#broad-epoch-analysis-modules-beam) (Broad EPOCH Analysis Modules).
 
 ## Installation
 
@@ -17,7 +17,7 @@ pip install epyscan
 or from a local checkout:
 
 ```bash
-git clone https://github.com/PlasmaFAIR/epyscan.git
+git clone https://github.com/epochpic/epyscan.git
 cd epyscan
 pip install .
 ```
@@ -88,8 +88,14 @@ If epyscan contributes to a project that leads to publication, please acknowledg
 
 ![BEAM logo](./BEAM.png)
 
-BEAM is structured as a set of independent yet complementary open-source tools designed for analysing [EPOCH](https://epochpic.github.io/) simulations where researchers can adopt only the components they need, without being constrained by a rigid framework. The packages are as follows:
+**BEAM** is a collection of independent yet complementary open-source tools for analysing EPOCH simulations, designed to be modular so researchers can adopt only the components they require without being constrained by a rigid framework. In line with the **FAIR principles — Findable**, **Accessible**, **Interoperable**, and **Reusable** — each package is openly published with clear documentation and versioning (Findable), distributed via public repositories (Accessible), designed to follow common standards for data structures and interfaces (Interoperable), and includes licensing and metadata to support long-term use and adaptation (Reusable). The packages are as follows:
 
-- [sdf-xarray](https://github.com/PlasmaFAIR/sdf-xarray): Reading and processing SDF files and converting them to [xarray](https://docs.xarray.dev/en/stable/).
-- [epydeck](https://github.com/PlasmaFAIR/epydeck): Input deck reader and writer.
-- [epyscan](https://github.com/PlasmaFAIR/epyscan): Create campaigns over a given parameter space using various sampling methods.
+- [sdf-xarray](https://github.com/epochpic/sdf-xarray): Reading and processing SDF files and converting them to [xarray](https://docs.xarray.dev/en/stable/).
+- [epydeck](https://github.com/epochpic/epydeck): Input deck reader and writer.
+- [epyscan](https://github.com/epochpic/epyscan): Create campaigns over a given parameter space using various sampling methods.
+
+## PlasmaFAIR
+
+![PlasmaFAIR logo](PlasmaFAIR.svg)
+
+Originally developed by [PlasmaFAIR](https://plasmafair.github.io), EPSRC Grant EP/V051822/1
