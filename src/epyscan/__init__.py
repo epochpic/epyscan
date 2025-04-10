@@ -194,6 +194,25 @@ class GridScan:
 
 
 class LatinHypercubeSampler:
+    """Latin hypercube sampling over the parameter ranges
+
+    Arguments
+    ---------
+    parameters:
+        Mapping of parameters to ranges. Keys should be in the form of
+        `block_name:parameter`, while values should be dicts with the
+        following keys:
+
+        - `"min"`: minimum value of the parameter
+        - `"max"`: maximum value of the parameter
+        - `"log"`: (optional) `bool`, if `True` then the sampling distribution
+          is uniform in log space for this parameter
+
+        Note that the keys `"n_samples"`, `"endpoint"` and `"values"` are
+        supported in the `GridScan` class, but are not recognised by this class.
+
+    """
+
     def __init__(self, parameters: dict):
         self._parameters = deepcopy(parameters)
         for key, value in self._parameters.items():
