@@ -149,6 +149,18 @@ class GridScan:
         for k, v in parameters.items():
             if "values" in v:
                 self.parameters[k] = v["values"]
+                if len(v) > 1:
+                    other_fields = set(v.keys()) - {"values"}
+                    field_name_str = ", ".join(
+                        sorted([f"'{field}'" for field in other_fields])
+                    )
+                    raise UserWarning(
+                        f"Parameter '{k}' has a 'values' field alongside other fields."
+                        f" The 'values' field always takes precedence over other fields."
+                        f" The number of samples selected for this parameter will be equal to"
+                        f" the length of 'values' ({len(v['values'])})."
+                        f" The following fields will be overridden: {field_name_str}."
+                    )
             else:
                 self.parameters[k] = _gridspace(
                     v["min"],
