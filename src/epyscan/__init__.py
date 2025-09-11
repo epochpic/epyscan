@@ -1,3 +1,4 @@
+import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Union
@@ -7,14 +8,65 @@ import numpy as np
 from scipy.stats import qmc
 
 
+def allocate_next_run_number(root: Path):
+    """
+    Return the next available run number in the given root directory.
+
+    This function searches all existing run directories and returns the
+    highest run number plus 1, or 0 if no runs exist. Only the lowest-level
+    run directories are considered (e.g., 'run_0', 'run_50').
+
+    Parameters
+    ----------
+    root : Path
+        The root directory to search for existing run directories.
+
+    Returns
+    -------
+    int
+        The next available run number, or 0 if none exist.
+    """
+    run_nums = [
+        int(path.name[4:]) for path in root.rglob("*") if re.fullmatch(r"run_\d+", path.name)
+    ]
+
+    return max(run_nums, default=-1) + 1
+
+
 def rundir_hierarchy(root: Path, run_num: int) -> Path:
-    """Create nested directory structure for a run"""
+    """
+    Create the nested directory structure for a given run number.
+
+    Campaign runs are organised into a hierarchy to avoid putting too many
+    files in a single directory. The structure follows `rundir_hierarchy`:
+
+        ./run_0_1000000/run_0_10000/run_0_100/run_[0-99]
+
+    As the run numbers increase, higher-level directories are split further:
+
+        ./run_0_1000000/run_0_10000/run_100_200/run_[100-199]
+        ./run_0_1000000/run_10000_20000/run_10000_10100/run_[10000-10100]
+
+    The hierarchy ensures that only the lowest-level directories (e.g., 'run_0',
+    'run_50') contain individual simulation runs, while higher-level directories
+    manage grouping of runs in batches.
+
+    Parameters
+    ----------
+    root : Path
+        The root directory where the run hierarchy should be created.
+    run_num : int
+        The run number for which the directories will be created.
+
+    Returns
+    -------
+    Path
+        The full path to the newly created run directory.
+    """
 
     def level_dir(exponent: int) -> Path:
         level = 100**exponent
-        return Path(
-            f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}"
-        )
+        return Path(f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}")
 
     level_1_dir = level_dir(3)
     level_2_dir = level_dir(2)
@@ -64,7 +116,7 @@ class Campaign:
     """
 
     def __init__(self, template: dict, root: Union[str, Path]):
-        self._counter = 0
+        self._counter = allocate_next_run_number(root)
         self.template = template
         self.root = Path(root)
 
@@ -139,9 +191,7 @@ class GridScan:
         def _gridspace(start, stop, num: int, log: bool = False, endpoint: bool = True):
             """Generalisation over logspace/linspace"""
             if log:
-                return np.logspace(
-                    np.log10(start), np.log10(stop), num=num, endpoint=endpoint
-                )
+                return np.logspace(np.log10(start), np.log10(stop), num=num, endpoint=endpoint)
 
             return np.linspace(start, stop, num=num, endpoint=endpoint)
 
