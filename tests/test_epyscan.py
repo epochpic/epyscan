@@ -83,7 +83,9 @@ def test_latin_hypercube():
     for k, v in parameters.items():
         intervals = np.linspace(v["min"], v["max"], n_samples + 1)
         if v.get("log", False):
-            intervals = np.logspace(np.log10(v["min"]), np.log10(v["max"]), n_samples + 1)
+            intervals = np.logspace(
+                np.log10(v["min"]), np.log10(v["max"]), n_samples + 1
+            )
         samples_for_k = np.array([sample[k] for sample in samples])
         interval_counts = np.array(
             [
