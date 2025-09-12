@@ -27,7 +27,9 @@ def allocate_next_run_number(root: Path):
         The next available run number, or 0 if none exist.
     """
     run_nums = [
-        int(path.name[4:]) for path in root.rglob("*") if re.fullmatch(r"run_\d+", path.name)
+        int(path.name[4:])
+        for path in root.rglob("*")
+        if re.fullmatch(r"run_\d+", path.name)
     ]
 
     return max(run_nums, default=-1) + 1
@@ -66,7 +68,9 @@ def rundir_hierarchy(root: Path, run_num: int) -> Path:
 
     def level_dir(exponent: int) -> Path:
         level = 100**exponent
-        return Path(f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}")
+        return Path(
+            f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}"
+        )
 
     level_1_dir = level_dir(3)
     level_2_dir = level_dir(2)
@@ -193,7 +197,9 @@ class GridScan:
         def _gridspace(start, stop, num: int, log: bool = False, endpoint: bool = True):
             """Generalisation over logspace/linspace"""
             if log:
-                return np.logspace(np.log10(start), np.log10(stop), num=num, endpoint=endpoint)
+                return np.logspace(
+                    np.log10(start), np.log10(stop), num=num, endpoint=endpoint
+                )
 
             return np.linspace(start, stop, num=num, endpoint=endpoint)
 
