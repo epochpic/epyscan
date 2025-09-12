@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import epydeck
 import numpy as np
 
@@ -143,3 +145,66 @@ def test_campaign(tmp_path):
         actual_case_deck = epydeck.load(f)
 
     assert actual_case_deck == expected_case_deck
+
+
+def test_load_existing_campaign(tmp_path):
+    # Simulate a pre-existing campaign by making fake paths
+    base_path = tmp_path / "run_0_1000000/run_0_10000/run_0_100"
+
+    existing_campaign_paths = [
+        base_path / "run_0",
+        base_path / "run_1",
+        base_path / "run_2",
+        base_path / "run_3",
+        base_path / "run_4",
+    ]
+
+    for path in existing_campaign_paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+    template = {"block": {"var4": 1.23}, "other_block": {"var5": True}}
+    campaign = epyscan.Campaign(template, tmp_path, append=True)
+
+    new_path = campaign.setup_case({"block": {"var4": 1.24}})
+    assert new_path == (base_path / "run_5")
+    assert new_path.exists()
+
+
+def test_override_existing_campaign(tmp_path):
+    base_path = tmp_path / "run_0_1000000/run_0_10000/run_0_100"
+
+    existing_campaign_paths = [
+        base_path / "run_0",
+        base_path / "run_1",
+        base_path / "run_2",
+        base_path / "run_3",
+        base_path / "run_4",
+    ]
+
+    for path in existing_campaign_paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+    template = {"block": {"var4": 1.23}, "other_block": {"var5": True}}
+    campaign = epyscan.Campaign(template, tmp_path)
+
+    new_path = campaign.setup_case({"block": {"var4": 1.24}})
+    assert new_path == (base_path / "run_0")
+    assert new_path.exists()
+
+
+def test_retrieve_existing_run_count(tmp_path):
+    base_path = tmp_path / "run_0_1000000/run_0_10000/run_0_100"
+    (base_path / "run_0").mkdir(parents=True)
+    (base_path / "run_1").mkdir()
+    (base_path / "run_50").mkdir()
+    (base_path / "run_100").mkdir()
+
+    assert epyscan.allocate_next_run_number(tmp_path) == 101
+
+
+def test_retrieve_existing_run_count_edge_cases(tmp_path):
+    (tmp_path / "run_10").mkdir()
+    (tmp_path / "run_20_30").mkdir()
+    (tmp_path / "not_a_run").mkdir()
+
+    assert epyscan.allocate_next_run_number(tmp_path) == 11
