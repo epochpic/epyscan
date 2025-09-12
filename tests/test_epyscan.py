@@ -83,9 +83,7 @@ def test_latin_hypercube():
     for k, v in parameters.items():
         intervals = np.linspace(v["min"], v["max"], n_samples + 1)
         if v.get("log", False):
-            intervals = np.logspace(
-                np.log10(v["min"]), np.log10(v["max"]), n_samples + 1
-            )
+            intervals = np.logspace(np.log10(v["min"]), np.log10(v["max"]), n_samples + 1)
         samples_for_k = np.array([sample[k] for sample in samples])
         interval_counts = np.array(
             [
@@ -163,10 +161,32 @@ def test_load_existing_campaign(tmp_path):
         Path(path).mkdir(parents=True, exist_ok=True)
 
     template = {"block": {"var4": 1.23}, "other_block": {"var5": True}}
-    campaign = epyscan.Campaign(template, tmp_path)
+    campaign = epyscan.Campaign(template, tmp_path, append=True)
 
     new_path = campaign.setup_case({"block": {"var4": 1.24}})
     assert new_path == (base_path / "run_5")
+    assert new_path.exists()
+
+
+def test_override_existing_campaign(tmp_path):
+    base_path = tmp_path / "run_0_1000000/run_0_10000/run_0_100"
+
+    existing_campaign_paths = [
+        base_path / "run_0",
+        base_path / "run_1",
+        base_path / "run_2",
+        base_path / "run_3",
+        base_path / "run_4",
+    ]
+
+    for path in existing_campaign_paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+    template = {"block": {"var4": 1.23}, "other_block": {"var5": True}}
+    campaign = epyscan.Campaign(template, tmp_path)
+
+    new_path = campaign.setup_case({"block": {"var4": 1.24}})
+    assert new_path == (base_path / "run_0")
     assert new_path.exists()
 
 

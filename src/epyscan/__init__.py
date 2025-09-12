@@ -27,9 +27,7 @@ def allocate_next_run_number(root: Path):
         The next available run number, or 0 if none exist.
     """
     run_nums = [
-        int(path.name[4:])
-        for path in root.rglob("*")
-        if re.fullmatch(r"run_\d+", path.name)
+        int(path.name[4:]) for path in root.rglob("*") if re.fullmatch(r"run_\d+", path.name)
     ]
 
     return max(run_nums, default=-1) + 1
@@ -68,9 +66,7 @@ def rundir_hierarchy(root: Path, run_num: int) -> Path:
 
     def level_dir(exponent: int) -> Path:
         level = 100**exponent
-        return Path(
-            f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}"
-        )
+        return Path(f"run_{int(run_num / level) * level}_{int(run_num / level + 1) * level}")
 
     level_1_dir = level_dir(3)
     level_2_dir = level_dir(2)
@@ -108,10 +104,12 @@ class Campaign:
         Base template deck as a Python dict (for example, as created by `epydeck`)
     root:
         Path to root run directory
+    append:
+        Flag to decide whether to append new runs to the end of an existing
+        campaign (if True) or overwrite it (if False)
 
     Examples
     --------
-
     >>> with open("template.deck") as f:
             template = epydeck.load(f)
     >>> campaign = Campaign(template, "grid_root")
@@ -119,8 +117,8 @@ class Campaign:
 
     """
 
-    def __init__(self, template: dict, root: Union[str, Path]):
-        self._counter = allocate_next_run_number(root)
+    def __init__(self, template: dict, root: Union[str, Path], append: bool = False):
+        self._counter = allocate_next_run_number(root) if append else 0
         self.template = template
         self.root = Path(root)
 
@@ -195,9 +193,7 @@ class GridScan:
         def _gridspace(start, stop, num: int, log: bool = False, endpoint: bool = True):
             """Generalisation over logspace/linspace"""
             if log:
-                return np.logspace(
-                    np.log10(start), np.log10(stop), num=num, endpoint=endpoint
-                )
+                return np.logspace(np.log10(start), np.log10(stop), num=num, endpoint=endpoint)
 
             return np.linspace(start, stop, num=num, endpoint=endpoint)
 
